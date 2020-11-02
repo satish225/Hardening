@@ -1,0 +1,320 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: satish-secret-1
+  namespace: default
+  resourceVersion: "8400"
+  selfLink: /api/v1/namespaces/default/secrets/satish-secret-1
+  uid: a5771d71-e7be-413c-af24-1f9ec05b3208
+type: Opaque
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: satish
+  namespace: default
+  resourceVersion: "6961"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/satish
+  uid: 70f72306-dee7-48d3-a8e4-fdc9f3d8b272
+secrets:
+- name: satish-secret-1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: satish.role
+  namespace: default
+  resourceVersion: "12557"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
+  uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
+rules:
+- apiGroups: [""]
+  resources: [""]
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: satish-rolebinding
+  namespace: default
+  resourceVersion: "13576"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/rolebindings/cnaf-rolebinding
+  uid: 8658175d-0bbf-4f39-929f-850ccf776a0a
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: satish.role
+subjects:
+- kind: ServiceAccount
+  name: satish
+  namespace: satish
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: satish-clusterole
+  resourceVersion: "10051"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/clusterroles/satish-role
+  uid: 8e238b8b-f1fb-45c1-bf5a-c4ca71f02189
+rules:
+- apiGroups: [""]  
+  resources: [""]  
+  verbs:  
+  - get  
+  - list  
+  - watch  
+  - update
+  - create
+- apiGroups: 
+  - apps
+  resources:  
+  - deployments
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: satish-clusterrolebinding
+  resourceVersion: "10791"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/satish-rolebinding
+  uid: 119d38f2-5d72-4d8e-a49b-b6a88ce7e90e
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: satish-clusterrole
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: satish
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cnaf.role
+  namespace: default
+  resourceVersion: "12557"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
+  uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
+rules:
+- apiGroups: [""]
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - delete
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+    - namespaceSelector:
+        matchLabels:
+          project: myproject
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/24
+    ports:
+    - protocol: TCP
+      port: 5978
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: satish.role
+  namespace: default
+  resourceVersion: "12557"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
+  uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
+rules:
+- apiGroups: [""]
+  resources: [""]
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - delete
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    seLinuxOptions:
+      level: "s0:c123,c456"
+  volumes:
+  - name: sec-ctx-vol
+    emptyDir: {}
+  containers:
+  - name: sec-ctx-demo
+    image: busybox
+    command: [ "sh", "-c", "sleep 1h" ]
+    volumeMounts:
+    - name: sec-ctx-vol
+      mountPath: /data/demo
+    securityContext:
+      allowPrivilegeEscalation: false
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-resource-backend
+spec:
+  defaultBackend:
+    resource:
+      apiGroup: k8s.example.com
+      kind: StorageBucket
+      name: static-assets
+  rules:
+    - http:
+        paths:
+          - path: /icons
+            pathType: ImplementationSpecific
+            backend:
+              resource:
+                apiGroup: k8s.example.com
+                kind: StorageBucket
+                name: icon-assets
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-wildcard-host
+spec:
+  rules:
+  - host: "foo.bar.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/bar"
+        backend:
+          service:
+            name: service1
+            port:
+              number: 80
+  - host: "*.foo.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/foo"
+        backend:
+          service:
+            name: service2
+            port:
+              number: 80
+---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csr-creator
+rules:
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csr-approver
+rules:
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests/approval
+  verbs:
+  - update
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - signers
+  resourceNames:
+  - example.com/my-signer-name # example.com/* can be used to authorize for all signers in the 'example.com' domain
+  verbs:
+  - approve
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: csr-signer
+rules:
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests/status
+  verbs:
+  - update
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - signers
+  resourceName:
+  - example.com/my-signer-name # example.com/* can be used to authorize for all signers in the 'example.com' domain
+  verbs:
+  - sign
