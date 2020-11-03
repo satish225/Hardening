@@ -63,17 +63,17 @@ metadata:
   selfLink: /apis/rbac.authorization.k8s.io/v1/clusterroles/satish-role
   uid: 8e238b8b-f1fb-45c1-bf5a-c4ca71f02189
 rules:
-- apiGroups: [""]  
-  resources: [""]  
-  verbs:  
-  - get  
-  - list  
-  - watch  
+- apiGroups: [""]
+  resources: [""]
+  verbs:
+  - get
+  - list
+  - watch
   - update
   - create
-- apiGroups: 
+- apiGroups:
   - apps
-  resources:  
+  resources:
   - deployments
   - statefulsets
   verbs:
@@ -133,24 +133,6 @@ spec:
     ports:
     - protocol: TCP
       port: 5978
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: satish.role
-  namespace: default
-  resourceVersion: "12557"
-  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
-  uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
-rules:
-- apiGroups: [""]
-  resources: [""]
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-  - delete
 ---
 apiVersion: v1
 kind: Pod
