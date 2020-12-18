@@ -116,7 +116,6 @@ rules:
   - list
   - watch
   - update
-  - delete
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
