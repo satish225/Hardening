@@ -26,7 +26,7 @@ metadata:
   name: satish.role
   namespace: default
   resourceVersion: "12557"
-  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
+  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/satish.role
   uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
 rules:
 - apiGroups: [""]
@@ -44,11 +44,11 @@ metadata:
   name: satish-rolebinding
   namespace: default
   resourceVersion: "13576"
-  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/rolebindings/cnaf-rolebinding
+  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/rolebindings/satish-rolebinding
   uid: 8658175d-0bbf-4f39-929f-850ccf776a0a
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: satish.role
 subjects:
 - kind: ServiceAccount
@@ -63,17 +63,17 @@ metadata:
   selfLink: /apis/rbac.authorization.k8s.io/v1/clusterroles/satish-role
   uid: 8e238b8b-f1fb-45c1-bf5a-c4ca71f02189
 rules:
-- apiGroups: [""]  
-  resources: [""]  
-  verbs:  
-  - get  
-  - list  
-  - watch  
+- apiGroups: [""]
+  resources: [""]
+  verbs:
+  - get
+  - list
+  - watch
   - update
   - create
-- apiGroups: 
+- apiGroups:
   - apps
-  resources:  
+  resources:
   - deployments
   - statefulsets
   verbs:
@@ -98,6 +98,7 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User
   name: satish
+---
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -189,7 +190,7 @@ metadata:
   name: ingress-wildcard-host
 spec:
   rules:
-  - host: "foo.bar.com"
+  - host: "*.bar.com"
     http:
       paths:
       - pathType: Prefix
@@ -249,7 +250,6 @@ rules:
   - certificates.k8s.io
   resources:
   - signers
-  resourceNames:
   - example.com/my-signer-name # example.com/* can be used to authorize for all signers in the 'example.com' domain
   verbs:
   - approve
@@ -277,7 +277,6 @@ rules:
   - certificates.k8s.io
   resources:
   - signers
-  resourceName:
   - example.com/my-signer-name # example.com/* can be used to authorize for all signers in the 'example.com' domain
   verbs:
   - sign
