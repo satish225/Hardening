@@ -39,6 +39,7 @@ roleRef:
   kind: ClusterRole
   name: elasticsearch-logging
   apiGroup: ""
+## Elastic Search
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -104,7 +105,7 @@ spec:
   selector:
     k8s-app: elasticsearch-logging
 ---
-
+### LogStash 
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -190,7 +191,7 @@ spec:
     port: 5044
     targetPort: 5044
 ---
-file beat agaent
+### file beat agaent
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -322,6 +323,7 @@ spec:
       - name: data
         emptyDir: {}
 ---
+### Kibana 
 ---
 apiVersion: apps/v1
 kind: Deployment
