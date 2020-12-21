@@ -99,24 +99,6 @@ subjects:
   kind: User
   name: satish
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: cnaf.role
-  namespace: default
-  resourceVersion: "12557"
-  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
-  uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
-rules:
-- apiGroups: [""]
-  resources:
-  - '*'
-  verbs:
-  - get
-  - list
-  - watch
-  - update
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -151,24 +133,6 @@ spec:
     ports:
     - protocol: TCP
       port: 5978
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: satish.role
-  namespace: default
-  resourceVersion: "12557"
-  selfLink: /apis/rbac.authorization.k8s.io/v1/namespaces/default/roles/cnaf.role
-  uid: 9f94982d-9d1d-4cc6-8771-6063a403ee4a
-rules:
-- apiGroups: [""]
-  resources: [""]
-  verbs:
-  - get
-  - list
-  - watch
-  - update
-  - delete
 ---
 apiVersion: v1
 kind: Pod
